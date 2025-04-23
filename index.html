@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>欢迎使用TRC20检测系统</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; }
+    h1 { font-size: 1.5rem; text-align: center; }
+    button { width: 100%; padding: 15px; font-size: 1rem; margin-top: 20px; border: none; border-radius: 8px; background: #4CAF50; color: white; }
+    .container { max-width: 500px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div id="app" class="container">
+    <h1>欢迎使用TRC20检测系统</h1>
+    <button v-if="!walletConnected" @click="connectWallet">连接钱包</button>
+    <button v-else @click="gotoTransferPage">转账</button>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          walletConnected: false,
+        };
+      },
+      methods: {
+        async connectWallet() {
+          if (window.tronWeb && window.tronWeb.ready) {
+            this.walletConnected = true;
+          } else {
+            alert("请使用 imToken 钱包或支持 TRON 的 DApp 浏览器打开本页面。");
+          }
+        },
+        gotoTransferPage() {
+          window.location.href = "transfer.html";
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

